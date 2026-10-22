@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Nauka TI – fiszki i quizy</title>
+  <meta name="description" content="Fiszki, quizy ABCD i egzamin próbny z Technologii Informacyjnej (testy 1 i 2).">
+  <meta name="theme-color" content="#4f46e5" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0e1016" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Nauka TI">
+  <link rel="stylesheet" href="style.css?v=1">
+  <script>
+    // motyw ustawiamy przed narysowaniem strony, żeby nie mrugało
+    try {
+      var t = JSON.parse(localStorage.getItem('nauka-ti:v1') || '{}');
+      if (t.settings && (t.settings.theme === 'light' || t.settings.theme === 'dark')) {
+        document.documentElement.setAttribute('data-theme', t.settings.theme);
+      }
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <main id="app" class="wrap">
+    <noscript><p class="noscript">Ta aplikacja wymaga włączonego JavaScriptu.</p></noscript>
+  </main>
+  <script src="data/test1.js?v=1"></script>
+  <script src="data/test2.js?v=1"></script>
+  <script src="app.js?v=1"></script>
+</body>
+</html>

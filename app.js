@@ -1021,15 +1021,17 @@
   if (route() && !['sciaga', 'ustawienia', 'egzamin'].includes(route())) history.replaceState(null, '', '#/');
   render(true);
   examPopup();
+  // wraca za każdym razem, gdy ktoś wraca do strony (np. odblokuje telefon)
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') examPopup();
+  });
 
   /* ================= Popup: odliczanie do egzaminu ================= */
 
   function examPopup() {
     const EXAM_AT = new Date(2026, 9, 25, 18, 0, 0); // 25.10.2026, 18:00 czasu lokalnego
     if (Date.now() >= EXAM_AT.getTime()) return;
-    try {
-      if (sessionStorage.getItem('nauka-ti:popup') === '1') return;
-    } catch (e) {}
+    if (document.querySelector('.exam-pop')) return;
     const el = document.createElement('div');
     el.className = 'exam-pop';
     el.setAttribute('role', 'dialog');
@@ -1074,9 +1076,6 @@
       document.body.style.overflow = '';
       el.classList.add('out');
       setTimeout(() => el.remove(), 250);
-      try {
-        sessionStorage.setItem('nauka-ti:popup', '1');
-      } catch (e) {}
     };
     document.getElementById('examPopClose').addEventListener('click', close);
     el.addEventListener('click', (e) => {
@@ -1087,7 +1086,17 @@
 
   if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
+      navigator.serviceWorker
+        .register('sw.js')
+        .then((reg) => {
+          // co minutę sprawdzamy, czy jest nowa wersja – nowy service worker przeładuje kartę
+          const check = () => reg.update().catch(() => {});
+          setInterval(check, 60 * 1000);
+          document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') check();
+          });
+        })
+        .catch(() => {});
     });
   }
 })();

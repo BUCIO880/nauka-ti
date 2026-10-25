@@ -1,10 +1,10 @@
 /* Service worker: aplikacja działa offline. Przy każdej zmianie plików podbij VERSION. */
-const VERSION = 'nauka-ti-v2';
+const VERSION = 'nauka-ti-v3';
 const FILES = [
   './',
   './index.html',
-  './style.css?v=2',
-  './app.js?v=2',
+  './style.css?v=3',
+  './app.js?v=3',
   './data/test1.js?v=1',
   './data/test2.js?v=1',
   './manifest.webmanifest',

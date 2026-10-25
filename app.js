@@ -1020,6 +1020,70 @@
   // Odświeżenie w trakcie rundy/egzaminu → wracamy na start (postęp jest już zapisany).
   if (route() && !['sciaga', 'ustawienia', 'egzamin'].includes(route())) history.replaceState(null, '', '#/');
   render(true);
+  examPopup();
+
+  /* ================= Popup: odliczanie do egzaminu ================= */
+
+  function examPopup() {
+    const EXAM_AT = new Date(2026, 9, 25, 18, 0, 0); // 25.10.2026, 18:00 czasu lokalnego
+    if (Date.now() >= EXAM_AT.getTime()) return;
+    try {
+      if (sessionStorage.getItem('nauka-ti:popup') === '1') return;
+    } catch (e) {}
+    const el = document.createElement('div');
+    el.className = 'exam-pop';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    el.setAttribute('aria-labelledby', 'examPopTitle');
+    el.innerHTML = `
+      <div class="exam-pop-card">
+        <div class="exam-pop-label" id="examPopTitle">⏰ Egzamin za</div>
+        <div class="exam-pop-big"><span id="examPopMin">–</span><small id="examPopUnit">min</small></div>
+        <div class="exam-pop-clock" id="examPopClock">–</div>
+        <div class="exam-pop-msg">
+          <div class="exam-pop-emoji" aria-hidden="true">🏋️</div>
+          <p><b>Zrób 10 przysiadów</b> zamiast klikać w telefon.<br>Krew do mózgu = lepsze myślenie.</p>
+        </div>
+        <div class="exam-pop-luck">POWODZENIA! 🍀</div>
+        <button type="button" class="exam-pop-btn" id="examPopClose">Zrobione – wracam do nauki</button>
+      </div>`;
+    document.body.appendChild(el);
+    document.body.style.overflow = 'hidden';
+    const tick = () => {
+      const left = EXAM_AT.getTime() - Date.now();
+      if (left <= 0) {
+        document.getElementById('examPopTitle').textContent = '⏰ Egzamin';
+        document.getElementById('examPopMin').textContent = 'TERAZ';
+        document.getElementById('examPopUnit').textContent = '';
+        document.getElementById('examPopClock').textContent = '18:00';
+        return clearInterval(h);
+      }
+      const totalMin = Math.ceil(left / 60000);
+      const hh = Math.floor(left / 3600000);
+      const mm = Math.floor((left % 3600000) / 60000);
+      const ss = Math.floor((left % 60000) / 1000);
+      document.getElementById('examPopMin').textContent = totalMin;
+      document.getElementById('examPopUnit').textContent = plural(totalMin, 'minutę', 'minuty', 'minut');
+      document.getElementById('examPopClock').textContent =
+        (hh ? hh + ':' + String(mm).padStart(2, '0') : mm) + ':' + String(ss).padStart(2, '0') + ' · start o 18:00';
+    };
+    const h = setInterval(tick, 1000);
+    tick();
+    const close = () => {
+      clearInterval(h);
+      document.body.style.overflow = '';
+      el.classList.add('out');
+      setTimeout(() => el.remove(), 250);
+      try {
+        sessionStorage.setItem('nauka-ti:popup', '1');
+      } catch (e) {}
+    };
+    document.getElementById('examPopClose').addEventListener('click', close);
+    el.addEventListener('click', (e) => {
+      if (e.target === el) close();
+    });
+    document.getElementById('examPopClose').focus({ preventScroll: true });
+  }
 
   if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
     window.addEventListener('load', () => {

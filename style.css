@@ -380,3 +380,52 @@ mark { background: #fde68a; color: #1a1a1a; border-radius: 3px; padding: 0 1px; 
   .bar-top { margin-top: -28px; padding-top: 16px; }
   .search { margin-top: -28px; padding-top: 16px; }
 }
+
+/* ===== Popup: odliczanie do egzaminu ===== */
+.exam-pop {
+  position: fixed; inset: 0; z-index: 100;
+  display: grid; place-items: center;
+  padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+  background: rgba(10, 12, 24, .62);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  animation: popFade .25s ease;
+  overflow-y: auto;
+}
+.exam-pop.out { opacity: 0; transition: opacity .25s ease; }
+.exam-pop-card {
+  width: 100%; max-width: 440px; text-align: center; color: #fff;
+  border-radius: 28px; padding: 28px 22px 22px;
+  background: radial-gradient(120% 90% at 50% 0%, #7c83ff 0%, #4f46e5 45%, #312e81 100%);
+  box-shadow: 0 24px 60px rgba(49, 46, 129, .55), inset 0 1px 0 rgba(255, 255, 255, .25);
+  animation: popIn .35s cubic-bezier(.2, .9, .3, 1.2);
+}
+.exam-pop-label { font-size: 1rem; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; opacity: .9; }
+.exam-pop-big {
+  display: flex; align-items: baseline; justify-content: center; gap: 10px;
+  font-size: clamp(4.5rem, 24vw, 7.5rem); font-weight: 850; line-height: 1; margin: 10px 0 6px;
+  font-variant-numeric: tabular-nums; text-shadow: 0 6px 24px rgba(0, 0, 0, .25);
+}
+.exam-pop-big small { font-size: clamp(1.2rem, 6vw, 1.7rem); font-weight: 750; opacity: .9; }
+.exam-pop-clock {
+  display: inline-block; font-size: .95rem; font-weight: 650; font-variant-numeric: tabular-nums;
+  background: rgba(255, 255, 255, .16); border-radius: 999px; padding: 6px 14px;
+}
+.exam-pop-msg {
+  margin: 20px 0 14px; padding: 16px; border-radius: 18px;
+  background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .22);
+}
+.exam-pop-emoji { font-size: 2.6rem; line-height: 1; margin-bottom: 8px; animation: squat 1.2s ease-in-out infinite; }
+.exam-pop-msg p { font-size: 1.12rem; line-height: 1.45; }
+.exam-pop-luck {
+  font-size: clamp(1.7rem, 8vw, 2.3rem); font-weight: 900; letter-spacing: .04em; margin: 4px 0 18px;
+  background: linear-gradient(90deg, #fde68a, #fff, #a7f3d0); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.exam-pop-btn {
+  width: 100%; min-height: 54px; border: 0; border-radius: 16px;
+  background: #fff; color: #312e81; font-weight: 800; font-size: 1.05rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .2);
+}
+.exam-pop-btn:focus-visible { outline: 3px solid #fde68a; outline-offset: 3px; }
+@keyframes popFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { from { opacity: 0; transform: scale(.88) translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes squat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px) scaleY(.9); } }

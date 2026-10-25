@@ -1,10 +1,10 @@
 /* Service worker: aplikacja działa offline. Przy każdej zmianie plików podbij VERSION. */
-const VERSION = 'nauka-ti-v1';
+const VERSION = 'nauka-ti-v2';
 const FILES = [
   './',
   './index.html',
-  './style.css?v=1',
-  './app.js?v=1',
+  './style.css?v=2',
+  './app.js?v=2',
   './data/test1.js?v=1',
   './data/test2.js?v=1',
   './manifest.webmanifest',
@@ -16,7 +16,7 @@ const FILES = [
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(VERSION).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(VERSION).then((c) => c.addAll(FILES.map((f) => new Request(f, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (e) => {
@@ -25,6 +25,9 @@ self.addEventListener('activate', (e) => {
       .keys()
       .then((keys) => Promise.all(keys.filter((k) => k !== VERSION).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
+      // otwarte karty od razu przeładowują się na nową wersję
+      .then(() => self.clients.matchAll({ type: 'window' }))
+      .then((list) => list.forEach((c) => c.navigate(c.url).catch(() => {})))
   );
 });
 
